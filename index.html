@@ -1,0 +1,535 @@
+
+  <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kantin Sehat Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Container Utama Aplikasi -->
+    <div id="app" class="max-w-7xl mx-auto p-4 md:p-6">
+
+        <!-- Halaman Login -->
+        <div id="loginPage" class="fade-in max-w-md mx-auto mt-10 md:mt-20">
+            <div class="bg-white p-8 rounded-2xl shadow-lg">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">Kantin Sehat Digital</h1>
+                    <p class="text-gray-500 mt-2">Silakan login untuk melanjutkan</p>
+                </div>
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
+                        <input type="text" id="username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                        <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Login</button>
+                    <p id="loginError" class="text-red-500 text-sm mt-4 text-center"></p>
+                </form>
+                 <div class="mt-6 text-xs text-gray-400 text-center">
+                    <p>Gunakan akun di bawah ini:</p>
+                    <p><b>Siswa:</b> user / user123</p>
+                    <p><b>Penjual:</b> penjual / penjual123</p>
+                    <p><b>Admin:</b> admin / admin123</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header Umum setelah Login -->
+        <header id="appHeader" class="hidden fade-in bg-white p-4 rounded-2xl shadow-md mb-6 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">Kantin Sehat Digital</h1>
+            <div>
+                <span id="welcomeMessage" class="text-gray-700 mr-4"></span>
+                <button id="logoutButton" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-300">Logout</button>
+            </div>
+        </header>
+
+        <!-- Dashboard Siswa -->
+        <div id="siswaDashboard" class="hidden fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Kolom Menu Makanan -->
+                <div class="lg:col-span-2">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Menu Hari Ini</h2>
+                    <div id="menuContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Kartu menu akan dimasukkan oleh JS -->
+                    </div>
+                </div>
+                <!-- Kolom Keranjang & Pesanan -->
+                <div>
+                    <!-- Keranjang Belanja -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 border-b pb-3 mb-3">Keranjang Anda</h3>
+                        <div id="cartContainer">
+                           <p class="text-gray-500">Keranjang masih kosong.</p>
+                        </div>
+                        <div id="cartTotal" class="mt-4 text-lg font-bold border-t pt-3"></div>
+                        <div id="checkoutSection" class="hidden">
+                             <div class="mt-4">
+                                <label for="deliveryOption" class="block text-gray-700 font-medium mb-2">Opsi Pengambilan</label>
+                                <select id="deliveryOption" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="diambil">Ambil Sendiri di Kantin</option>
+                                    <option value="diantar">Antar ke Kelas</option>
+                                </select>
+                            </div>
+                            <div class="mt-4">
+                                <label for="orderNotes" class="block text-gray-700 font-medium mb-2">Catatan Pesanan (opsional)</label>
+                                <textarea id="orderNotes" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Contoh: jangan pakai sambal"></textarea>
+                            </div>
+                            <button id="checkoutButton" class="w-full mt-4 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">Pesan Sekarang</button>
+                        </div>
+                    </div>
+                    <!-- Riwayat Pesanan -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 border-b pb-3 mb-3">Riwayat Pesanan Anda</h3>
+                        <div id="orderHistoryContainer" class="space-y-4">
+                            <p class="text-gray-500">Belum ada riwayat pesanan.</p>
+                            <!-- Riwayat pesanan akan dimasukkan oleh JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Penjual -->
+        <div id="penjualDashboard" class="hidden fade-in">
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Kolom Kelola Menu -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-3">Kelola Menu</h2>
+                    <div id="penjualMenuContainer" class="space-y-4 mb-6">
+                        <!-- Menu yang dikelola penjual -->
+                    </div>
+                     <div class="border-t pt-6">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-3">Tambah Menu Baru</h3>
+                        <form id="addMenuForm" class="space-y-3">
+                            <input type="text" id="newMenuName" placeholder="Nama Makanan" class="w-full px-4 py-2 border rounded-lg" required>
+                          <input type="number" id="newMenuPrice" placeholder="Harga" class="w-full px-4 py-2 border rounded-lg" required>
+                            <input type="number" id="newMenuStock" placeholder="Stok" class="w-full px-4 py-2 border rounded-lg" required>
+                            <input type="text" id="newMenuImage" placeholder="URL Gambar" class="w-full px-4 py-2 border rounded-lg" required>
+                            <textarea id="newMenuDesc" placeholder="Deskripsi Singkat" rows="2" class="w-full px-4 py-2 border rounded-lg" required></textarea>
+                            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition">Tambah Menu</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Kolom Pesanan Masuk -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-3">Pesanan Masuk</h2>
+                    <div id="incomingOrdersContainer" class="space-y-4">
+                        <p class="text-gray-500">Belum ada pesanan masuk.</p>
+                        <!-- Pesanan masuk akan dimasukkan oleh JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Admin -->
+        <div id="adminDashboard" class="hidden fade-in">
+            <div class="bg-white p-8 rounded-2xl shadow-lg">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">Dashboard Admin</h2>
+                    <p class="text-gray-600 mt-2">Selamat datang, Admin! Anda dapat memantau aktivitas kantin di sini.</p>
+                </div>
+                <!-- Statistics Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                    <div class="bg-blue-100 p-6 rounded-2xl">
+                        <h3 class="text-lg font-semibold text-blue-800">Total Pembeli</h3>
+                        <p id="adminTotalPembeli" class="text-4xl font-bold text-blue-900 mt-2">0</p>
+                    </div>
+                    <div class="bg-green-100 p-6 rounded-2xl">
+                        <h3 class="text-lg font-semibold text-green-800">Total Menu Makanan</h3>
+                        <p id="adminTotalMenu" class="text-4xl font-bold text-green-900 mt-2">0</p>
+                    </div>
+                    <div class="bg-yellow-100 p-6 rounded-2xl">
+                        <h3 class="text-lg font-semibold text-yellow-800">Total Pemasukan</h3>
+                        <p id="adminTotalPemasukan" class="text-4xl font-bold text-yellow-900 mt-2">Rp 0</p>
+                    </div>
+                    <div class="bg-indigo-100 p-6 rounded-2xl">
+                        <h3 class="text-lg font-semibold text-indigo-800">Sisa Makanan (Stok)</h3>
+                        <p id="adminSisaMakanan" class="text-4xl font-bold text-indigo-900 mt-2">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // === Bagian State & Data Awal ===
+    let currentUser = null;
+    let menuItems = [
+        { id: 1, name: 'Nasi Goreng Spesial', price: 15000, stock: 20, image: 'https://placehold.co/600x400/f8b400/FFF?text=Nasi+Goreng', description: 'Nasi goreng dengan telur, ayam, dan sayuran.' },
+        { id: 2, name: 'Ayam Bakar Madu', price: 18000, stock: 15, image: 'https://placehold.co/600x400/d9534f/FFF?text=Ayam+Bakar', description: 'Ayam bakar lezat dengan bumbu madu meresap.' },
+        { id: 3, name: 'Soto Ayam Lamongan', price: 12000, stock: 25, image: 'https://placehold.co/600x400/5bc0de/FFF?text=Soto+Ayam', description: 'Soto ayam segar dengan koya dan sambal.' },
+        { id: 4, name: 'Gado-gado Komplit', price: 13000, stock: 18, image: 'https://placehold.co/600x400/5cb85c/FFF?text=Gado-gado', description: 'Sayuran segar dengan bumbu kacang istimewa.' },
+    ];
+    let cart = [];
+    let orders = [];
+    let orderIdCounter = 1;
+
+    // === Bagian Selektor DOM ===
+    const loginPage = document.getElementById('loginPage');
+    const appHeader = document.getElementById('appHeader');
+    const siswaDashboard = document.getElementById('siswaDashboard');
+    const penjualDashboard = document.getElementById('penjualDashboard');
+    const adminDashboard = document.getElementById('adminDashboard');
+    
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const logoutButton = document.getElementById('logoutButton');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+
+    // === Fungsi Render Tampilan ===
+    
+    // Render Menu untuk Siswa
+    const renderMenuSiswa = () => {
+        const container = document.getElementById('menuContainer');
+        container.innerHTML = '';
+        menuItems.forEach(item => {
+            if (item.stock > 0) {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-xl shadow-md transition hover:shadow-lg';
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-40 object-cover rounded-lg mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">${item.name}</h3>
+                    <p class="text-gray-500 text-sm mb-2">${item.description}</p>
+                    <p class="text-blue-600 font-semibold mb-2">Rp ${item.price.toLocaleString('id-ID')}</p>
+                    <p class="text-sm text-gray-600 mb-4">Sisa stok: <strong>${item.stock}</strong></p>
+                    <form class="addToCartForm" data-id="${item.id}">
+                        <div class="flex items-center">
+                            <input type="number" name="quantity" class="w-1/3 px-3 py-1 border border-gray-300 rounded-l-lg" value="1" min="1" max="${item.stock}">
+                            <button type="submit" class="w-2/3 bg-blue-500 text-white font-semibold py-1 px-3 rounded-r-lg hover:bg-blue-600 transition">Tambah</button>
+                        </div>
+                    </form>
+                `;
+                container.appendChild(card);
+            }
+        });
+    };
+
+    // Render Keranjang Belanja Siswa
+    const renderCart = () => {
+        const container = document.getElementById('cartContainer');
+        const totalEl = document.getElementById('cartTotal');
+        const checkoutSection = document.getElementById('checkoutSection');
+        container.innerHTML = '';
+
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-gray-500">Keranjang masih kosong.</p>';
+            totalEl.innerHTML = '';
+            checkoutSection.classList.add('hidden');
+        } else {
+            let total = 0;
+            cart.forEach(cartItem => {
+                const menuItem = menuItems.find(item => item.id === cartItem.id);
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex justify-between items-center mb-2';
+                itemEl.innerHTML = `
+                    <div>
+                        <p class="font-semibold">${menuItem.name}</p>
+                        <p class="text-sm text-gray-600">${cartItem.quantity} x Rp ${menuItem.price.toLocaleString('id-ID')}</p>
+                    </div>
+                    <button class="text-red-500 hover:text-red-700 text-sm remove-from-cart" data-id="${cartItem.id}">Hapus</button>
+                `;
+                container.appendChild(itemEl);
+                total += cartItem.quantity * menuItem.price;
+            });
+            totalEl.innerHTML = `Total: <span class="text-blue-700">Rp ${total.toLocaleString('id-ID')}</span>`;
+            checkoutSection.classList.remove('hidden');
+        }
+    };
+    
+    // Render Riwayat Pesanan Siswa
+    const renderOrderHistory = () => {
+        const container = document.getElementById('orderHistoryContainer');
+        const userOrders = orders.filter(order => order.user === currentUser.username);
+        container.innerHTML = '';
+
+        if (userOrders.length === 0) {
+            container.innerHTML = '<p class="text-gray-500">Belum ada riwayat pesanan.</p>';
+        } else {
+            userOrders.reverse().forEach(order => {
+                const statusClass = order.status === 'selesai' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                let itemsHtml = order.items.map(item => `<li>${item.quantity}x ${item.name}</li>`).join('');
+                
+                const orderCard = document.createElement('div');
+                orderCard.className = 'border border-gray-200 p-3 rounded-lg';
+                orderCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-bold">Pesanan #${order.id}</p>
+                            <p class="text-sm text-gray-500">${order.deliveryMethod === 'diantar' ? 'Diantar ke Kelas' : 'Ambil di Kantin'}</p>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 rounded-full ${statusClass}">${order.status}</span>
+                    </div>
+                    <ul class="text-sm text-gray-700 mt-2 list-disc list-inside">${itemsHtml}</ul>
+                    ${order.notes ? `<p class="text-sm mt-2 text-gray-600 bg-gray-100 p-2 rounded"><strong>Catatan:</strong> ${order.notes}</p>` : ''}
+                    <p class="text-right font-semibold mt-2 text-blue-700">Total: Rp ${order.total.toLocaleString('id-ID')}</p>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+    };
+    
+    // Render Menu untuk Penjual
+    const renderMenuPenjual = () => {
+        const container = document.getElementById('penjualMenuContainer');
+        container.innerHTML = '';
+        if (menuItems.length === 0) {
+            container.innerHTML = '<p class="text-gray-500">Belum ada menu. Silakan tambahkan.</p>';
+            return;
+        }
+        menuItems.forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'flex items-center justify-between p-3 border rounded-lg';
+            itemEl.innerHTML = `
+                <div class="flex items-center">
+                    <img src="${item.image}" class="w-16 h-16 object-cover rounded-md mr-4">
+                    <div>
+                        <p class="font-bold">${item.name}</p>
+                        <p class="text-sm text-gray-600">Harga: Rp ${item.price.toLocaleString('id-ID')} | Stok: ${item.stock}</p>
+                    </div>
+                </div>
+                <div>
+                     <button class="text-sm bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition" onclick="deleteMenu(${item.id})">Hapus</button>
+                </div>
+            `;
+            // Note: Fitur edit disederhanakan menjadi hapus dan tambah baru untuk kemudahan
+            container.appendChild(itemEl);
+        });
+    };
+
+    // Render Pesanan Masuk untuk Penjual
+    const renderPesananMasuk = () => {
+        const container = document.getElementById('incomingOrdersContainer');
+        container.innerHTML = '';
+
+        if (orders.length === 0) {
+            container.innerHTML = '<p class="text-gray-500">Belum ada pesanan masuk.</p>';
+        } else {
+            [...orders].reverse().forEach(order => {
+                let itemsHtml = order.items.map(item => `<li>${item.quantity}x ${item.name}</li>`).join('');
+                const orderCard = document.createElement('div');
+                orderCard.className = 'border border-gray-200 p-4 rounded-lg';
+                orderCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                             <p class="font-bold">Pesanan #${order.id} <span class="text-sm text-gray-600 font-normal">oleh ${order.user}</span></p>
+                             <p class="text-sm text-gray-500">${order.deliveryMethod === 'diantar' ? 'Minta Diantar' : 'Akan Diambil'}</p>
+                        </div>
+                        <span class="font-semibold text-blue-700">Rp ${order.total.toLocaleString('id-ID')}</span>
+                    </div>
+                    <ul class="text-sm text-gray-700 mt-2 list-disc list-inside">${itemsHtml}</ul>
+                    ${order.notes ? `<p class="text-sm mt-2 text-gray-600 bg-gray-100 p-2 rounded"><strong>Catatan:</strong> ${order.notes}</p>` : ''}
+                    <div class="mt-3 pt-3 border-t">
+                        <label class="text-sm font-medium">Status Pesanan:</label>
+                        <select class="order-status-select ml-2 border rounded-md p-1" data-id="${order.id}">
+                            <option value="diproses" ${order.status === 'diproses' ? 'selected' : ''}>Diproses</option>
+                            <option value="selesai" ${order.status === 'selesai' ? 'selected' : ''}>Selesai</option>
+                        </select>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+    };
+
+    // Render Admin Dashboard Stats
+    const renderAdminDashboard = () => {
+        // 1. Total Pembeli (pengguna unik yang pernah memesan)
+        const totalPembeli = new Set(orders.map(order => order.user)).size;
+        document.getElementById('adminTotalPembeli').textContent = totalPembeli;
+
+        // 2. Total Menu Makanan
+        const totalMenu = menuItems.length;
+        document.getElementById('adminTotalMenu').textContent = totalMenu;
+
+        // 3. Total Pemasukan (dari semua pesanan)
+        const totalPemasukan = orders.reduce((sum, order) => sum + order.total, 0);
+        document.getElementById('adminTotalPemasukan').textContent = `Rp ${totalPemasukan.toLocaleString('id-ID')}`;
+
+        // 4. Sisa Makanan (total stok dari semua menu)
+        const sisaMakanan = menuItems.reduce((sum, item) => sum + item.stock, 0);
+        document.getElementById('adminSisaMakanan').textContent = sisaMakanan;
+    };
+
+    // === Fungsi Logika & Event Handler ===
+
+    // Fungsi untuk menampilkan halaman berdasarkan peran
+    const showPage = (role) => {
+        loginPage.classList.add('hidden');
+        [siswaDashboard, penjualDashboard, adminDashboard].forEach(d => d.classList.add('hidden'));
+        appHeader.classList.remove('hidden');
+
+        if (role === 'siswa') {
+            siswaDashboard.classList.remove('hidden');
+            renderMenuSiswa();
+            renderCart();
+            renderOrderHistory();
+        } else if (role === 'penjual') {
+            penjualDashboard.classList.remove('hidden');
+            renderMenuPenjual();
+            renderPesananMasuk();
+        } else if (role === 'admin') {
+            adminDashboard.classList.remove('hidden');
+            renderAdminDashboard();
+        }
+    };
+
+    // Event handler untuk login
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        loginError.textContent = '';
+        
+        const accounts = {
+            user: { password: 'user123', role: 'siswa' },
+            penjual: { password: 'penjual123', role: 'penjual' },
+            admin: { password: 'admin123', role: 'admin' },
+        };
+
+        if (accounts[username] && accounts[username].password === password) {
+            currentUser = { username, role: accounts[username].role };
+            welcomeMessage.textContent = `Halo, ${currentUser.username}!`;
+            showPage(currentUser.role);
+        } else {
+            loginError.textContent = 'Username atau password salah.';
+        }
+    });
+
+    // Event handler untuk logout
+    logoutButton.addEventListener('click', () => {
+        currentUser = null;
+        cart = [];
+        appHeader.classList.add('hidden');
+        [siswaDashboard, penjualDashboard, adminDashboard].forEach(d => d.classList.add('hidden'));
+        loginPage.classList.remove('hidden');
+        loginForm.reset();
+    });
+
+    // Event delegation untuk fungsionalitas dinamis
+    document.body.addEventListener('submit', (e) => {
+        // Tambah ke keranjang
+        if (e.target.matches('.addToCartForm')) {
+            e.preventDefault();
+            const itemId = parseInt(e.target.dataset.id);
+            const quantity = parseInt(e.target.querySelector('input[name="quantity"]').value);
+            const menuItem = menuItems.find(item => item.id === itemId);
+
+            if (quantity > 0 && quantity <= menuItem.stock) {
+                const cartItem = cart.find(item => item.id === itemId);
+                if (cartItem) {
+                    cartItem.quantity += quantity;
+                } else {
+                    cart.push({ id: itemId, quantity });
+                }
+                menuItem.stock -= quantity;
+                renderMenuSiswa();
+                renderCart();
+            } else {
+                alert('Jumlah pesanan tidak valid atau melebihi stok.');
+            }
+        }
+        // Tambah menu baru oleh penjual
+        if (e.target.id === 'addMenuForm') {
+            e.preventDefault();
+            const name = document.getElementById('newMenuName').value;
+            const price = parseInt(document.getElementById('newMenuPrice').value);
+            const stock = parseInt(document.getElementById('newMenuStock').value);
+            const image = document.getElementById('newMenuImage').value;
+            const description = document.getElementById('newMenuDesc').value;
+
+            const newMenuItem = {
+                id: menuItems.length > 0 ? Math.max(...menuItems.map(item => item.id)) + 1 : 1,
+                name, price, stock, image, description
+            };
+            menuItems.push(newMenuItem);
+            renderMenuPenjual();
+            e.target.reset();
+        }
+    });
+    
+    document.body.addEventListener('click', (e) => {
+        // Hapus dari keranjang
+        if (e.target.matches('.remove-from-cart')) {
+            const itemId = parseInt(e.target.dataset.id);
+            const cartIndex = cart.findIndex(item => item.id === itemId);
+            const cartItem = cart[cartIndex];
+            const menuItem = menuItems.find(item => item.id === itemId);
+
+            menuItem.stock += cartItem.quantity;
+            cart.splice(cartIndex, 1);
+            
+            renderMenuSiswa();
+            renderCart();
+        }
+        // Checkout / Pesan Sekarang
+        if (e.target.id === 'checkoutButton') {
+            const deliveryMethod = document.getElementById('deliveryOption').value;
+            const notes = document.getElementById('orderNotes').value;
+            const total = cart.reduce((sum, cartItem) => {
+                const menuItem = menuItems.find(item => item.id === cartItem.id);
+                return sum + (cartItem.quantity * menuItem.price);
+            }, 0);
+
+            const newOrder = {
+                id: orderIdCounter++,
+                user: currentUser.username,
+                items: cart.map(cartItem => {
+                    const menuItem = menuItems.find(item => item.id === cartItem.id);
+                    return { ...cartItem, name: menuItem.name, price: menuItem.price };
+                }),
+                total,
+                status: 'diproses',
+                deliveryMethod,
+                notes,
+            };
+
+            orders.push(newOrder);
+            cart = []; // Kosongkan keranjang
+            
+            alert('Pesanan berhasil dibuat!');
+            renderCart();
+            renderOrderHistory();
+            document.getElementById('orderNotes').value = '';
+        }
+    });
+
+    document.body.addEventListener('change', (e) => {
+        // Ubah status pesanan oleh penjual
+        if (e.target.matches('.order-status-select')) {
+            const orderId = parseInt(e.target.dataset.id);
+            const newStatus = e.target.value;
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                renderPesananMasuk();
+            }
+        }
+    });
+    
+    // Fungsi global untuk hapus menu (dipanggil dari onclick)
+    window.deleteMenu = (id) => {
+        if(confirm('Apakah Anda yakin ingin menghapus menu ini?')) {
+            menuItems = menuItems.filter(item => item.id !== id);
+            renderMenuPenjual();
+        }
+    }
+});
+</script>
+
+</body>
+</html>
