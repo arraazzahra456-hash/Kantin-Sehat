@@ -1,5 +1,5 @@
 
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -116,8 +116,8 @@
                         <h3 class="text-xl font-semibold text-gray-700 mb-3">Tambah Menu Baru</h3>
                         <form id="addMenuForm" class="space-y-3">
                             <input type="text" id="newMenuName" placeholder="Nama Makanan" class="w-full px-4 py-2 border rounded-lg" required>
-                          <input type="number" id="newMenuPrice" placeholder="Harga" class="w-full px-4 py-2 border rounded-lg" required>
-                            <input type="number" id="newMenuStock" placeholder="Stok" class="w-full px-4 py-2 border rounded-lg" required>
+                            <input type="number" id="newMenuPrice" placeholder="Harga" class="w-full px-4 py-2 border rounded-lg" required min="0">
+                            <input type="number" id="newMenuStock" placeholder="Stok" class="w-full px-4 py-2 border rounded-lg" required min="0">
                             <input type="text" id="newMenuImage" placeholder="URL Gambar" class="w-full px-4 py-2 border rounded-lg" required>
                             <textarea id="newMenuDesc" placeholder="Deskripsi Singkat" rows="2" class="w-full px-4 py-2 border rounded-lg" required></textarea>
                             <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition">Tambah Menu</button>
@@ -140,16 +140,16 @@
             <div class="bg-white p-8 rounded-2xl shadow-lg">
                 <div class="text-center mb-8">
                     <h2 class="text-3xl font-bold text-gray-800">Dashboard Admin</h2>
-                    <p class="text-gray-600 mt-2">Selamat datang, Admin! Anda dapat memantau aktivitas kantin di sini.</p>
+                    <p class="text-gray-600 mt-2">Ringkasan Aktivitas Kantin</p>
                 </div>
                 <!-- Statistics Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center mb-12">
                     <div class="bg-blue-100 p-6 rounded-2xl">
                         <h3 class="text-lg font-semibold text-blue-800">Total Pembeli</h3>
                         <p id="adminTotalPembeli" class="text-4xl font-bold text-blue-900 mt-2">0</p>
                     </div>
                     <div class="bg-green-100 p-6 rounded-2xl">
-                        <h3 class="text-lg font-semibold text-green-800">Total Menu Makanan</h3>
+                        <h3 class="text-lg font-semibold text-green-800">Total Menu</h3>
                         <p id="adminTotalMenu" class="text-4xl font-bold text-green-900 mt-2">0</p>
                     </div>
                     <div class="bg-yellow-100 p-6 rounded-2xl">
@@ -157,8 +157,34 @@
                         <p id="adminTotalPemasukan" class="text-4xl font-bold text-yellow-900 mt-2">Rp 0</p>
                     </div>
                     <div class="bg-indigo-100 p-6 rounded-2xl">
-                        <h3 class="text-lg font-semibold text-indigo-800">Sisa Makanan (Stok)</h3>
+                        <h3 class="text-lg font-semibold text-indigo-800">Sisa Stok</h3>
                         <p id="adminSisaMakanan" class="text-4xl font-bold text-indigo-900 mt-2">0</p>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="mt-8 border-t pt-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Manajemen Pengguna</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- User List -->
+                        <div>
+                            <h4 class="text-xl font-semibold text-gray-700 mb-4">Daftar Pengguna</h4>
+                            <div id="userListContainer" class="space-y-3"></div>
+                        </div>
+                        <!-- Add User Form -->
+                        <div>
+                             <h4 class="text-xl font-semibold text-gray-700 mb-4">Tambah Pengguna Baru</h4>
+                             <form id="addUserForm" class="bg-gray-50 p-6 rounded-lg space-y-4">
+                                <input type="text" id="newUsername" placeholder="Username Baru" class="w-full px-4 py-2 border rounded-lg" required>
+                                <input type="password" id="newPassword" placeholder="Password Baru" class="w-full px-4 py-2 border rounded-lg" required>
+                                <select id="newRole" class="w-full px-4 py-2 border rounded-lg" required>
+                                    <option value="" disabled selected>Pilih Peran</option>
+                                    <option value="siswa">Siswa</option>
+                                    <option value="penjual">Penjual</option>
+                                </select>
+                                <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded-lg hover:bg-green-700 transition">Tambah Pengguna</button>
+                             </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -169,6 +195,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     // === Bagian State & Data Awal ===
     let currentUser = null;
+    let users = [
+        { id: 1, username: 'user', password: 'user123', role: 'siswa' },
+        { id: 2, username: 'penjual', password: 'penjual123', role: 'penjual' },
+        { id: 3, username: 'admin', password: 'admin123', role: 'admin' },
+    ];
+    let userIdCounter = 4;
+
     let menuItems = [
         { id: 1, name: 'Nasi Goreng Spesial', price: 15000, stock: 20, image: 'https://placehold.co/600x400/f8b400/FFF?text=Nasi+Goreng', description: 'Nasi goreng dengan telur, ayam, dan sayuran.' },
         { id: 2, name: 'Ayam Bakar Madu', price: 18000, stock: 15, image: 'https://placehold.co/600x400/d9534f/FFF?text=Ayam+Bakar', description: 'Ayam bakar lezat dengan bumbu madu meresap.' },
@@ -260,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userOrders.length === 0) {
             container.innerHTML = '<p class="text-gray-500">Belum ada riwayat pesanan.</p>';
         } else {
-            userOrders.reverse().forEach(order => {
+            [...userOrders].reverse().forEach(order => {
                 const statusClass = order.status === 'selesai' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
                 let itemsHtml = order.items.map(item => `<li>${item.quantity}x ${item.name}</li>`).join('');
                 
@@ -293,20 +326,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         menuItems.forEach(item => {
             const itemEl = document.createElement('div');
-            itemEl.className = 'flex items-center justify-between p-3 border rounded-lg';
+            itemEl.id = `menu-item-${item.id}`;
+            itemEl.className = 'p-3 border rounded-lg';
             itemEl.innerHTML = `
-                <div class="flex items-center">
-                    <img src="${item.image}" class="w-16 h-16 object-cover rounded-md mr-4">
-                    <div>
-                        <p class="font-bold">${item.name}</p>
-                        <p class="text-sm text-gray-600">Harga: Rp ${item.price.toLocaleString('id-ID')} | Stok: ${item.stock}</p>
+                <div id="display-menu-${item.id}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                           <img src="${item.image}" class="w-16 h-16 object-cover rounded-md mr-4">
+                            <div>
+                                <p class="font-bold">${item.name}</p>
+                                <p class="text-sm text-gray-600">Harga: Rp ${item.price.toLocaleString('id-ID')} | Stok: ${item.stock}</p>
+                            </div>
+                        </div>
+                        <div class="space-x-2">
+                           <button class="text-sm bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 transition" onclick="showEditMenuForm(${item.id})">Ubah</button>
+                           <button class="text-sm bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition" onclick="deleteMenu(${item.id})">Hapus</button>
+                        </div>
                     </div>
                 </div>
-                <div>
-                     <button class="text-sm bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition" onclick="deleteMenu(${item.id})">Hapus</button>
+                <div id="edit-menu-${item.id}" class="hidden">
+                    <form class="editMenuForm space-y-2" data-id="${item.id}">
+                        <p class="font-bold">${item.name}</p>
+                        <div>
+                            <label class="text-sm">Harga:</label>
+                            <input type="number" name="price" value="${item.price}" class="w-full px-2 py-1 border rounded" required min="0">
+                        </div>
+                        <div>
+                            <label class="text-sm">Stok:</label>
+                            <input type="number" name="stock" value="${item.stock}" class="w-full px-2 py-1 border rounded" required min="0">
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="submit" class="w-full bg-green-500 text-white text-sm py-1 px-3 rounded-md hover:bg-green-600 transition">Simpan</button>
+                            <button type="button" class="w-full bg-gray-500 text-white text-sm py-1 px-3 rounded-md hover:bg-gray-600 transition" onclick="cancelEditMenu(${item.id})">Batal</button>
+                        </div>
+                    </form>
                 </div>
             `;
-            // Note: Fitur edit disederhanakan menjadi hapus dan tambah baru untuk kemudahan
             container.appendChild(itemEl);
         });
     };
@@ -346,23 +401,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Render Admin Dashboard Stats
+    // Render Admin Dashboard Stats & User Management
     const renderAdminDashboard = () => {
-        // 1. Total Pembeli (pengguna unik yang pernah memesan)
-        const totalPembeli = new Set(orders.map(order => order.user)).size;
-        document.getElementById('adminTotalPembeli').textContent = totalPembeli;
-
-        // 2. Total Menu Makanan
-        const totalMenu = menuItems.length;
-        document.getElementById('adminTotalMenu').textContent = totalMenu;
-
-        // 3. Total Pemasukan (dari semua pesanan)
-        const totalPemasukan = orders.reduce((sum, order) => sum + order.total, 0);
-        document.getElementById('adminTotalPemasukan').textContent = `Rp ${totalPemasukan.toLocaleString('id-ID')}`;
-
-        // 4. Sisa Makanan (total stok dari semua menu)
-        const sisaMakanan = menuItems.reduce((sum, item) => sum + item.stock, 0);
-        document.getElementById('adminSisaMakanan').textContent = sisaMakanan;
+        // Stats
+        document.getElementById('adminTotalPembeli').textContent = new Set(orders.map(o => o.user)).size;
+        document.getElementById('adminTotalMenu').textContent = menuItems.length;
+        document.getElementById('adminTotalPemasukan').textContent = `Rp ${orders.reduce((s, o) => s + o.total, 0).toLocaleString('id-ID')}`;
+        document.getElementById('adminSisaMakanan').textContent = menuItems.reduce((s, i) => s + i.stock, 0);
+        
+        // User Management
+        const userContainer = document.getElementById('userListContainer');
+        userContainer.innerHTML = '';
+        users.filter(u => u.role !== 'admin').forEach(user => {
+            const userEl = document.createElement('div');
+            userEl.id = `user-row-${user.id}`;
+            userEl.className = 'bg-gray-100 p-3 rounded-lg flex justify-between items-center';
+            userEl.innerHTML = `
+                <div>
+                    <p class="font-bold">${user.username} <span class="text-xs font-normal bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full">${user.role}</span></p>
+                    <p class="text-sm text-gray-600">Password: ******</p>
+                </div>
+                <div class="space-x-2">
+                     <button class="text-sm bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 transition" onclick="deleteUser(${user.id})">Hapus</button>
+                </div>
+            `;
+            // Note: Edit password functionality can be complex. For simplicity, admin can delete and re-add user.
+            userContainer.appendChild(userEl);
+        });
     };
 
     // === Fungsi Logika & Event Handler ===
@@ -395,14 +460,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value;
         loginError.textContent = '';
         
-        const accounts = {
-            user: { password: 'user123', role: 'siswa' },
-            penjual: { password: 'penjual123', role: 'penjual' },
-            admin: { password: 'admin123', role: 'admin' },
-        };
+        const foundUser = users.find(u => u.username === username && u.password === password);
 
-        if (accounts[username] && accounts[username].password === password) {
-            currentUser = { username, role: accounts[username].role };
+        if (foundUser) {
+            currentUser = { username: foundUser.username, role: foundUser.role };
             welcomeMessage.textContent = `Halo, ${currentUser.username}!`;
             showPage(currentUser.role);
         } else {
@@ -446,18 +507,41 @@ document.addEventListener('DOMContentLoaded', () => {
         // Tambah menu baru oleh penjual
         if (e.target.id === 'addMenuForm') {
             e.preventDefault();
-            const name = document.getElementById('newMenuName').value;
-            const price = parseInt(document.getElementById('newMenuPrice').value);
-            const stock = parseInt(document.getElementById('newMenuStock').value);
-            const image = document.getElementById('newMenuImage').value;
-            const description = document.getElementById('newMenuDesc').value;
-
             const newMenuItem = {
                 id: menuItems.length > 0 ? Math.max(...menuItems.map(item => item.id)) + 1 : 1,
-                name, price, stock, image, description
+                name: document.getElementById('newMenuName').value,
+                price: parseInt(document.getElementById('newMenuPrice').value),
+                stock: parseInt(document.getElementById('newMenuStock').value),
+                image: document.getElementById('newMenuImage').value,
+                description: document.getElementById('newMenuDesc').value
             };
             menuItems.push(newMenuItem);
             renderMenuPenjual();
+            e.target.reset();
+        }
+        // Simpan perubahan menu oleh penjual
+        if (e.target.matches('.editMenuForm')) {
+            e.preventDefault();
+            const id = parseInt(e.target.dataset.id);
+            const item = menuItems.find(i => i.id === id);
+            item.price = parseInt(e.target.querySelector('input[name="price"]').value);
+            item.stock = parseInt(e.target.querySelector('input[name="stock"]').value);
+            renderMenuPenjual();
+        }
+        // Tambah pengguna oleh admin
+        if (e.target.id === 'addUserForm') {
+            e.preventDefault();
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('newRole').value;
+
+            if (users.some(u => u.username === username)) {
+                alert('Username sudah ada. Silakan gunakan username lain.');
+                return;
+            }
+
+            users.push({ id: userIdCounter++, username, password, role });
+            renderAdminDashboard();
             e.target.reset();
         }
     });
@@ -467,14 +551,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.matches('.remove-from-cart')) {
             const itemId = parseInt(e.target.dataset.id);
             const cartIndex = cart.findIndex(item => item.id === itemId);
-            const cartItem = cart[cartIndex];
-            const menuItem = menuItems.find(item => item.id === itemId);
-
-            menuItem.stock += cartItem.quantity;
-            cart.splice(cartIndex, 1);
-            
-            renderMenuSiswa();
-            renderCart();
+            if (cartIndex > -1) {
+                const cartItem = cart[cartIndex];
+                const menuItem = menuItems.find(item => item.id === itemId);
+                if (menuItem) menuItem.stock += cartItem.quantity;
+                cart.splice(cartIndex, 1);
+                renderMenuSiswa();
+                renderCart();
+            }
         }
         // Checkout / Pesan Sekarang
         if (e.target.id === 'checkoutButton') {
@@ -484,23 +568,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const menuItem = menuItems.find(item => item.id === cartItem.id);
                 return sum + (cartItem.quantity * menuItem.price);
             }, 0);
-
             const newOrder = {
-                id: orderIdCounter++,
-                user: currentUser.username,
-                items: cart.map(cartItem => {
-                    const menuItem = menuItems.find(item => item.id === cartItem.id);
-                    return { ...cartItem, name: menuItem.name, price: menuItem.price };
-                }),
-                total,
-                status: 'diproses',
-                deliveryMethod,
-                notes,
+                id: orderIdCounter++, user: currentUser.username,
+                items: cart.map(cartItem => ({...cartItem, name: menuItems.find(i => i.id === cartItem.id).name})),
+                total, status: 'diproses', deliveryMethod, notes,
             };
-
             orders.push(newOrder);
             cart = []; // Kosongkan keranjang
-            
             alert('Pesanan berhasil dibuat!');
             renderCart();
             renderOrderHistory();
@@ -516,16 +590,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const order = orders.find(o => o.id === orderId);
             if (order) {
                 order.status = newStatus;
-                renderPesananMasuk();
+                if(currentUser.role === 'penjual') renderPesananMasuk();
             }
         }
     });
     
-    // Fungsi global untuk hapus menu (dipanggil dari onclick)
+    // === Fungsi Global untuk dipanggil dari onclick ===
     window.deleteMenu = (id) => {
         if(confirm('Apakah Anda yakin ingin menghapus menu ini?')) {
             menuItems = menuItems.filter(item => item.id !== id);
             renderMenuPenjual();
+        }
+    }
+    window.showEditMenuForm = (id) => {
+        document.getElementById(`display-menu-${id}`).classList.add('hidden');
+        document.getElementById(`edit-menu-${id}`).classList.remove('hidden');
+    }
+    window.cancelEditMenu = (id) => {
+        document.getElementById(`display-menu-${id}`).classList.remove('hidden');
+        document.getElementById(`edit-menu-${id}`).classList.add('hidden');
+    }
+    window.deleteUser = (id) => {
+        if(confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) {
+            users = users.filter(user => user.id !== id);
+            renderAdminDashboard();
         }
     }
 });
@@ -533,3 +621,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
+
